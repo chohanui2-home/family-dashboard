@@ -2901,6 +2901,7 @@
       if (!role) {
         lockState.needRole = true;
         lockState.role = '';
+        lockState.busy = false;
         $('lockPinRow').classList.add('hidden');
         $('lockRoleRow').classList.remove('hidden');
         setText('lockEmoji', '👨‍👩‍👧‍👦');
@@ -2925,16 +2926,17 @@
   }
 
   function submitLock() {
-    if (lockState.busy) { return; }
-    if ($('lockRoleRow') && !$('lockRoleRow').classList.contains('hidden')) {
+    if ($('lockRoleRow') && !$('lockRoleRow').classList.contains('hidden') && !lockState.busy) {
       if (!lockState.role) { lockError('내 기기 역할을 골라 주세요'); return; }
       myRole = lockState.role;
       session.role = lockState.role;
       writeSession();
       lockState.needRole = false;
+      lockState.busy = false;
       startApp();
       return;
     }
+    if (lockState.busy) { return; }
     var key = lockState.key || trim($('lockKey') ? $('lockKey').value : '');
     var pin = trim($('lockPin') ? $('lockPin').value : '');
     if (!key) { lockError('가족 접속 코드를 입력해 주세요'); return; }
